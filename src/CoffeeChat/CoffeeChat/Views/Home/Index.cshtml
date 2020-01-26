@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <img src="~/images/coffee-cup.png" width="200" height="200" />
+    <h1 class="display-4"><span class="text-warning font-weight-bold">Coffee</span>Chat</h1>
+    @if(!User.Identity.IsAuthenticated)
+    {
+        <h4>Login to start a new conversation!</h4>
+    }
+</div>
