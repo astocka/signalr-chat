@@ -15,5 +15,7 @@ namespace CoffeeChat.Models
         public AppUser()
         {
         }
+
+        public Avatar Avatar { get; set; }
     }
 }

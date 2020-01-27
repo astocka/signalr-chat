@@ -23,9 +23,10 @@ namespace CoffeeChat.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task <IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            return View(user);
         }
     }
 }

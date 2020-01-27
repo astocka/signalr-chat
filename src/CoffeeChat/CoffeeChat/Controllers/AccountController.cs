@@ -8,6 +8,7 @@ using CoffeeChat.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CoffeeChat.Controllers
 {
@@ -33,8 +34,16 @@ namespace CoffeeChat.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            var avatars = from Avatar a in Enum.GetValues(typeof(Avatar))
+                          select new
+                          {
+                              ID = (int)a,
+                              Name = a.ToString()
+                          };
+            ViewBag.AvatarList = new SelectList(avatars,"ID","Name");
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel signUpViewModel)
@@ -42,6 +51,7 @@ namespace CoffeeChat.Controllers
             if (ModelState.IsValid)
             {
                 var user = new AppUser(signUpViewModel.Login);
+                user.Avatar = signUpViewModel.Avatars.FirstOrDefault();
                 var result = await UserManager.CreateAsync(user, signUpViewModel.Password);
                 if (result.Succeeded)
                 {

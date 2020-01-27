@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoffeeChat.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -16,5 +17,7 @@ namespace CoffeeChat.ViewModels
         [Compare("Password")]
         [DisplayName("Confirm Password")]
         public string ConfirmPassword { get; set; }
+        [Required]
+        public IEnumerable<Avatar> Avatars { get; set; }
     }
 }
