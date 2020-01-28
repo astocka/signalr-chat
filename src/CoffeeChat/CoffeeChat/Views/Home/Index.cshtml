@@ -1,9 +1,10 @@
-﻿@model CoffeeChat.Models.AppUser
+﻿@model IEnumerable<CoffeeChat.Models.Message>
 @using CoffeeChat.Helpers
 
 @{
     ViewData["Title"] = "Home Page";
-    //var url = "icons8-bear-48.png";
+    var user = ViewBag.LoggedUser;
+    var userName = user.UserName;
 }
 
 @if (User.Identity.IsAuthenticated)
@@ -15,30 +16,85 @@ else
     Layout = "~/Views/Shared/_Home.cshtml";
 }
 
-<div class="text-center mt-4">
-    <img src="~/images/coffee-cup.png" width="200" height="200" />
-    <h1 class="display-4"><span class="text-warning font-weight-bold">Coffee</span>Chat</h1>
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <h4>Let's start a new conversation!</h4>
-        <div class="btn-group mt-3">
-            <a class="btn btn-lg btn-warning" asp-controller="Account" asp-action="Register">Register</a>
-            <a class="btn btn-lg btn-secondary" asp-controller="Account" asp-action="Login">Login</a>
-        </div>
-    }
+    <div class="text-center mt-2">
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <img src="~/images/coffee-cup.png" width="200" height="200" />
+            <h1 class="display-4"><span class="text-warning font-weight-bold">Coffee</span>Chat</h1>
+            <h4>Let's start a new conversation!</h4>
+            <div class="btn-group mt-3">
+                <a class="btn btn-lg btn-warning" asp-controller="Account" asp-action="Register">Register</a>
+                <a class="btn btn-lg btn-secondary" asp-controller="Account" asp-action="Login">Login</a>
+            </div>
+        }
 
-    @if (User.Identity.IsAuthenticated)
-    {
+        @if (User.Identity.IsAuthenticated)
+        {
             <div class="d-flex mt-3">
                 <ul class="list-unstyled list-group mx-auto">
                     <li class="list-group-item">
-                        <img src="~/images/avatars/@EnumHelper.GetAvatarUrl(Model.Avatar.ToString())" height="48" width="48" />
+                        <img src="~/images/avatars/@EnumHelper.GetAvatarUrl(user.Avatar.ToString())" height="48" width="48" />
                     </li>
                     <li class="list-group-item">
-                        <h4>Logged User: @Model.UserName</h4>
+                        <h4>Logged User: @user.UserName</h4>
                     </li>
                 </ul>
             </div>
 
-    }
-</div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div id="chat" style="max-height: 300px; margin-bottom: 10px;overflow: scroll; overflow-x:hidden;">
+                            @if (Model != null)
+                            {
+                                @foreach (var message in Model.OrderBy(m => m.CreateDate))
+                                {
+                                    <div class="row">
+                                        <div class="ml-3">
+                                            <span class="text-left">@message.UserName, @message.CreateDate.ToLocalTime()</span>
+                                            <p class="text-left">@message.Text</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <form asp-action="CreateMessage" class="form-inline text-center"
+                                  data-ajax-begin="clearInputField" data-ajax-complete=""
+                                  data-ajax-failure="alert('Fail')" data-ajax-success="sendMessage"
+                                  data-ajax="true" data-ajax-method="POST">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group">
+                                    <input name="Text" class="form-control input-lg" id="messageInput" />
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Send" id="sendButton" class="btn btn-success addMessageToChat" />
+                                </div>
+                                <input type="hidden" value="@user.UserName.ToString()" name="username" id="userInput" />
+                                <input type="hidden" value="@DateTime.Now" name="messageInput" id="=messageInput" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        
+            @if (User.Identity.IsAuthenticated)
+            {
+                <script>
+                     const userName = "@ViewBag.CurrentUserName";
+                </script>
+            }
+
+            @section scripts {
+                <script src="~/lib/signalr/signalr.min.js"></script>
+                <script src="~/lib/jquery/dist/jquery-unobtrusive-ajax.min.js"></script>
+                <script src="~/js/signalr/dist/browser/signalr.js"></script>
+                <script src="~/js/chat.js"></script>
+                <script src="~/js/signalrHandler.js"></script>
+            }
+        }
+    </div>

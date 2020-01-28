@@ -15,6 +15,7 @@ namespace CoffeeChat.Data
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
