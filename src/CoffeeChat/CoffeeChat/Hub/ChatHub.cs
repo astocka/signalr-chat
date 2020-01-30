@@ -4,14 +4,21 @@ using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using CoffeeChat.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace CoffeeChat.Hub
+namespace CoffeeChat.Hubs
 {
-    public class ChatHub : Microsoft.AspNetCore.SignalR.Hub
+    public class ChatHub : Hub
     {
-        public async Task SendMessage(Message message)
+        public async Task SendMessageToAll(string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.All.SendAsync("ReceiveMessage", new
+            {
+                Sender = Context.User.Identity.Name,
+                Message = message
+            }) ;
         }
     }
 }

@@ -20,5 +20,6 @@ namespace CoffeeChat.Models
 
         public Avatar Avatar { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
+        public string ConnectionId { get; set; }
     }
 }

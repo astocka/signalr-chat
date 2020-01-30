@@ -33,32 +33,11 @@ namespace CoffeeChat.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             ViewBag.LoggedUser = user;
-            var messages =  _appDbContext.Messages.ToList();
-            if(messages == null)
-            {
-                messages = new List<Message>();
-            }
             if (User.Identity.IsAuthenticated)
             {
                 ViewBag.CurrentUserName = user.UserName;
             }
-            return View(messages);
+            return View();
         }
-
-        public async Task<IActionResult> CreateMessage(Message message)
-        {
-            if (ModelState.IsValid)
-            {
-                message.UserName = User.Identity.Name;
-                var sender = await _userManager.GetUserAsync(User);
-                message.AppUserId = sender.Id;
-                message.CreateDate = DateTime.UtcNow;
-                await _appDbContext.Messages.AddAsync(message);
-                await _appDbContext.SaveChangesAsync();
-                return Ok();
-            }
-            return Content("Error");
-        }
-
     }
 }
