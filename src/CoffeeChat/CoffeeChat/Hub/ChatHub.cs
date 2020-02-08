@@ -23,7 +23,11 @@ namespace CoffeeChat.Hubs
 
         public async Task SendMessageToCaller(string message)
         {
-            await Clients.Caller.SendAsync("ReceiveMessage", message);
+            await Clients.Caller.SendAsync("ReceiveMessage", new
+            {
+                Sender = Context.User.Identity.Name,
+                Message = message
+            });
         }
 
         public async Task JoinGroup(string group)
@@ -33,7 +37,11 @@ namespace CoffeeChat.Hubs
 
         public async Task SendMessageToGroup(string groupName, string message)
         {
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", new
+            {
+                Sender = Context.User.Identity.Name,
+                Message = message
+            });
         }
     }
 }
