@@ -16,10 +16,12 @@ connection.on("ReceiveMessage", (req) => {
     if (req.sender) {
         message = req.sender + "[" + messageDate + "]: " + message;
     }
+
     var li = document.createElement("li");
     li.innerHTML = message;
     li.classList = "text-left";
     document.getElementById("messagesList").appendChild(li);
+
 });
 
 connection.start().then(function () {
@@ -29,8 +31,26 @@ connection.start().then(function () {
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var message = document.getElementById("messageInput").value;
+    var groupElement = document.getElementById("group");
+    var groupValue = groupElement.options[groupElement.selectedIndex].value;
 
-    connection.invoke("SendMessageToAll", message)
+    if (groupValue === "Main" || groupValue === "Myself") {
+        var method = groupValue === "Main" ? "SendMessageToAll" : "SendMessageToCaller";
+        connection.invoke(method, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+    } else if (groupValue === "Private") {
+        connection.invoke("SendMessageToGroup", "Private", message).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    event.preventDefault();
+});
+
+document.getElementById("joinGroup").addEventListener("click", function (event) {
+
+    connection.invoke("JoinGroup", "Private")
         .catch(function (err) {
             return console.error(err.toString());
         });

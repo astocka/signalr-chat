@@ -14,8 +14,19 @@ else
 {
     Layout = "~/Views/Shared/_Home.cshtml";
 }
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="form-group form-inline">
+        <select id="group" class="form-control">
+            <option value="Main">Main</option>
+            <option value="Myself">Myself</option>
+            <option value="Private">Private Group</option>
+        </select>
+        <input type="button" id="joinGroup" class="btn btn-warning form-control" value="Join Private Group" />
+    </div>
+}
 
-<div class="text-center mt-2">
+<div class="text-center mt-2 col-10">
     @if (!User.Identity.IsAuthenticated)
     {
         <img src="~/images/coffee-cup.png" width="200" height="200" />
@@ -29,13 +40,9 @@ else
 
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="d-flex mt-3">
-            <h3># main channel</h3>
-        </div>
-
         <div class="container-fluid">
             <div class="row">
-                <div class="col-10" style="height: 300px; margin-bottom: 10px; overflow: scroll; overflow-x:hidden;">
+                <div class="col-12" style="height: 300px; margin-bottom: 10px; overflow: scroll; overflow-x:hidden;">
                     <ul id="messagesList" class="list-unstyled"></ul>
                 </div>
             </div>
@@ -44,7 +51,7 @@ else
                 <div class="col-12">
                     <div class="form-group form-inline">
                         <img src="~/images/avatars/@EnumHelper.GetAvatarUrl(user.Avatar.ToString())" height="48" width="48" /><span class="h3 mr-2">@user.UserName</span>
-                        <input type="text" class="form-control input-lg col-8" id="messageInput" />
+                        <input type="text" class="form-control input-lg col-9" id="messageInput" />
                         <input type="submit" value="Send" id="sendButton" class="btn btn-success form-control" />
                     </div>
                 </div>

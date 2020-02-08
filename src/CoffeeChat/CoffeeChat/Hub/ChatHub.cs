@@ -20,5 +20,20 @@ namespace CoffeeChat.Hubs
                 Message = message
             }) ;
         }
+
+        public async Task SendMessageToCaller(string message)
+        {
+            await Clients.Caller.SendAsync("ReceiveMessage", message);
+        }
+
+        public async Task JoinGroup(string group)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, group);
+        }
+
+        public async Task SendMessageToGroup(string groupName, string message)
+        {
+            await Clients.Group(groupName).SendAsync("ReceiveMessage", message);
+        }
     }
 }
